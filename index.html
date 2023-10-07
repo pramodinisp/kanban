@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kanban Board</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+	    background-color: pink;
+        }
+
+        .board {
+            display: flex;
+            gap: 10px;
+        }
+
+        .column {
+            flex: 1;
+            border: 1px solid #ccc;
+            padding: 10px;
+            background-color: orange;
+            border-radius: 5px;
+        }
+
+        .task {
+            margin: 5px 0;
+            padding: 5px;
+            background-color: white;
+            border: 1px solid #ddd;
+            border-radius: 3px;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+<center><h1>Kanban board</h1>
+    <div class="board">
+        <div class="column">
+            <h3>To Do</h3>
+            <div class="tasks" id="todo">
+                <!-- Tasks go here -->
+            </div>
+        </div>
+        <div class="column">
+            <h3>In Progress</h3>
+            <div class="tasks" id="inprogress">
+            </div>
+        </div>
+        <div class="column">
+            <h3>Done</h3>
+            <div class="tasks" id="done">
+                <!-- Tasks go here -->
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Sample tasks
+        const tasks = [
+            { id: 1, text: "screening" },
+            { id: 2, text: "directing" },
+            { id: 3, text: "launching" },
+        ];
+
+        // Initialize Kanban board
+        function initializeBoard() {
+            const todoColumn = document.getElementById("todo");
+            const inProgressColumn = document.getElementById("inprogress");
+            const doneColumn = document.getElementById("done");
+
+            tasks.forEach((task) => {
+                const taskElement = createTaskElement(task);
+                todoColumn.appendChild(taskElement);
+            });
+
+            // Add event listeners for drag and drop
+            todoColumn.addEventListener("dragstart", dragstart);
+            inProgressColumn.addEventListener("dragstart", dragstart);
+            doneColumn.addEventListener("dragstart", dragstart);
+
+            todoColumn.addEventListener("dragover", dragover);
+            inProgressColumn.addEventListener("dragover", dragover);
+            doneColumn.addEventListener("dragover", dragover);
+
+            todoColumn.addEventListener("drop", drop);
+            inProgressColumn.addEventListener("drop", drop);
+            doneColumn.addEventListener("drop", drop);
+        }
+
+        function createTaskElement(task) {
+            const taskElement = document.createElement("div");
+            taskElement.className = "task";
+            taskElement.textContent = task.text;
+            taskElement.draggable = true;
+            taskElement.dataset.id = task.id;
+            return taskElement;
+        }
+
+        function dragstart(event) {
+            event.dataTransfer.setData("text/plain", event.target.dataset.id);
+        }
+
+        function dragover(event) {
+            event.preventDefault();
+        }
+
+        function drop(event) {
+            event.preventDefault();
+            const taskId = event.dataTransfer.getData("text/plain");
+            const taskElement = document.querySelector(`[data-id="${taskId}"]`);
+            const column = event.target;
+
+            if (column.classList.contains("tasks")) {
+                column.appendChild(taskElement);
+            }
+        }
+
+        initializeBoard();
+    </script>
+</body>
+</html>
